@@ -27,4 +27,4 @@ WheelsAIComponent::WheelsAIComponent(Entity* p)
   void WheelsAIComponent::update(double dt) {
     // call base class update for patrol behaviour
     EnemyAIComponent::update(dt);
-  };
+  }; 

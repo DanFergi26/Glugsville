@@ -22,4 +22,4 @@ public:
   void update(double dt) override;
 
   EnemyAIComponent() = delete;
-};
+}; 

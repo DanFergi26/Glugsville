@@ -72,7 +72,7 @@ void Level2Scene::Load() {
     s->getShape().setOrigin(Vector2f(16.f, 16.f));
 
     // hurt component 
-    //wheelsEnemy->addComponent<HurtComponent>();
+    // wheelsEnemy->addComponent<HurtComponent>();
 
   }
 
