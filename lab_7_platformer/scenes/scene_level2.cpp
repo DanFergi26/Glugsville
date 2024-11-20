@@ -11,6 +11,7 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+
 void Level2Scene::Load() {
   cout << "Scene 2 Load" << endl;
   ls::loadLevelFile("res/level_2.txt", 40.0f);
@@ -20,13 +21,19 @@ void Level2Scene::Load() {
   // Create player
   {
     // *********************************
+      auto startTiles = ls::findTiles(ls::START);
+      if (startTiles.empty()) {
+          cerr << "Error: No START tile found in level!" << endl;
+          return;
+      }
 
+      player = makeEntity();
+      player->setPosition(ls::getTilePosition(startTiles[0]));
+      auto s = player->addComponent<ShapeComponent>();
+      s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
+      s->getShape().setFillColor(Color::Magenta);
+      s->getShape().setOrigin(Vector2f(10.f, 15.f));
 
-
-
-
-
-    // *********************************
     player->addTag("player");
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
   }
@@ -38,14 +45,18 @@ void Level2Scene::Load() {
                        Vector2f(0, 24));
     // *********************************
     // Add HurtComponent
+    enemy->addComponent<HurtComponent>();
 
     // Add ShapeComponent, Red 16.f Circle
-
+    auto s = enemy->addComponent<ShapeComponent>();
+    s->setShape<sf::CircleShape>(16.f);
+    s->getShape().setFillColor(Color::Red);
+    s->getShape().setOrigin(Vector2f(16.f, 16.f));
 
 
 
     // Add EnemyAIComponent
-
+    enemy->addComponent<EnemyAIComponent>();
     // *********************************
   }
 
@@ -64,20 +75,22 @@ void Level2Scene::Load() {
   // Add physics colliders to level tiles.
   {
     // *********************************
+      auto walls = ls::findTiles(ls::WALL);
+      for (auto w : walls) {
+          auto pos = ls::getTilePosition(w);
+          pos += Vector2f(20.f, 20.f);
+          auto e = makeEntity();
+          e->setPosition(pos);
+          e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
 
 
-
-
-
-
-
-
-    // *********************************
+      }
   }
 
   cout << " Scene 2 Load Done" << endl;
   setLoaded(true);
 }
+
 
 void Level2Scene::UnLoad() {
   cout << "Scene 2 UnLoad" << endl;
@@ -94,6 +107,7 @@ void Level2Scene::Update(const double& dt) {
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level2);
   }
+
 }
 
 void Level2Scene::Render() {

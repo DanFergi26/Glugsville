@@ -12,6 +12,8 @@ using namespace sf;
 using namespace std;
 Scene* Engine::_activeScene = nullptr;
 std::string Engine::_gameName;
+sf::View Engine::_view;
+
 
 static bool loading = false;
 static float loadingspinner = 0.f;
@@ -81,9 +83,15 @@ void Engine::Render(RenderWindow& window) {
 
 void Engine::Start(unsigned int width, unsigned int height,
                    const std::string& gameName, Scene* scn) {
-  RenderWindow window(VideoMode(width, height), gameName);
+    unsigned int desiredWidth = 1600; // Example: Wider window
+   
+
+    // Override width and height with hardcoded values
+    RenderWindow window(VideoMode(desiredWidth, height), gameName);
   _gameName = gameName;
   _window = &window;
+  _view = sf::View(sf::FloatRect(0, 0, width, height));
+  _window->setView(_view);
   Renderer::initialise(window);
   Physics::initialise();
   ChangeScene(scn);
@@ -116,6 +124,14 @@ std::shared_ptr<Entity> Scene::makeEntity() {
   auto e = make_shared<Entity>(this);
   ents.list.push_back(e);
   return std::move(e);
+}
+sf::View& Engine::GetView() {
+    return _view;
+}
+
+void Engine::SetView(const sf::View& v) {
+    _view = v;
+    _window->setView(_view); // Apply the view to the window
 }
 
 void Engine::setVsync(bool b) { _window->setVerticalSyncEnabled(b); }

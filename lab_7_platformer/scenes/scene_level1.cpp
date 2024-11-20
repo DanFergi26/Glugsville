@@ -11,42 +11,79 @@ using namespace sf;
 
 static shared_ptr<Entity> player;
 
+void Level1Scene::Render() {
+    ls::render(Engine::GetWindow()); // Render the level
+    Scene::Render();                 // Call base class render
+}
+
 void Level1Scene::Load() {
-  cout << " Scene 1 Load" << endl;
-  ls::loadLevelFile("res/level_1.txt", 40.0f);
+    cout << "Scene 1 Load" << endl;
+    ls::loadLevelFile("res/level_1.txt", 40.0f);
 
-  auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
-  ls::setOffset(Vector2f(0, ho));
+    auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
+    ls::setOffset(Vector2f(0, ho));
 
-  // Create player
-  {
+    // Create player
+    auto startTiles = ls::findTiles(ls::START);
+    if (startTiles.empty()) {
+        cerr << "Error: No START tile found in level!" << endl;
+        return;
+    }
+
     player = makeEntity();
-    player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+    player->setPosition(ls::getTilePosition(startTiles[0]));
     auto s = player->addComponent<ShapeComponent>();
     s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
     s->getShape().setFillColor(Color::Magenta);
     s->getShape().setOrigin(Vector2f(10.f, 15.f));
 
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
-  }
 
-  // Add physics colliders to level tiles.
-  {
+    // Add physics colliders to level tiles
     auto walls = ls::findTiles(ls::WALL);
     for (auto w : walls) {
-      auto pos = ls::getTilePosition(w);
-      pos += Vector2f(20.f, 20.f); //offset to center
-      auto e = makeEntity();
-      e->setPosition(pos);
-      e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
+        auto pos = ls::getTilePosition(w);
+        pos += Vector2f(20.f, 20.f); // offset to center
+        auto e = makeEntity();
+        e->setPosition(pos);
+        e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
     }
-  }
 
-  //Simulate long loading times
-  std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-  cout << " Scene 1 Load Done" << endl;
+    // Center camera on the player
+    auto& camera = Engine::GetView();
+    camera.setCenter(player->getPosition());
+    Engine::SetView(camera);
 
-  setLoaded(true);
+    // Simulate long loading times
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+    cout << "Scene 1 Load Done" << endl;
+
+    setLoaded(true);
+}
+
+void set_camera(sf::View& camera, const sf::Vector2f& playerPosition, const sf::Vector2u& levelSize, const sf::Vector2u& windowSize) {
+    // Center the camera on the player's position
+    sf::Vector2f newCameraCenter = playerPosition;
+
+    // Calculate half of the window size for bounds checking
+    sf::Vector2f halfWindowSize(windowSize.x / 2.0f, windowSize.y / 2.0f);
+
+    // Keep the camera within the bounds of the level
+    if (newCameraCenter.x - halfWindowSize.x < 0) {
+        newCameraCenter.x = halfWindowSize.x;
+    }
+    if (newCameraCenter.y - halfWindowSize.y < 0) {
+        newCameraCenter.y = halfWindowSize.y;
+    }
+    if (newCameraCenter.x + halfWindowSize.x > levelSize.x) {
+        newCameraCenter.x = levelSize.x - halfWindowSize.x;
+    }
+    if (newCameraCenter.y + halfWindowSize.y > levelSize.y) {
+        newCameraCenter.y = levelSize.y - halfWindowSize.y;
+    }
+
+    // Update the camera's center
+    camera.setCenter(newCameraCenter);
 }
 
 void Level1Scene::UnLoad() {
@@ -57,14 +94,16 @@ void Level1Scene::UnLoad() {
 }
 
 void Level1Scene::Update(const double& dt) {
+    // Check if player reaches the end
+    if (ls::getTileAt(player->getPosition()) == ls::END) {
+        Engine::ChangeScene((Scene*)&level2);
+    }
 
-  if (ls::getTileAt(player->getPosition()) == ls::END) {
-    Engine::ChangeScene((Scene*)&level2);
-  }
-  Scene::Update(dt);
-}
+    // Update the camera to follow the player
+    auto& camera = Engine::GetView();
+    camera.setCenter(player->getPosition());
+    Engine::SetView(camera);
 
-void Level1Scene::Render() {
-  ls::render(Engine::GetWindow());
-  Scene::Render();
+    // Call the parent update
+    Scene::Update(dt);
 }
