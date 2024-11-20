@@ -20,41 +20,45 @@ void Level1Scene::Load() {
     cout << "Scene 1 Load" << endl;
     ls::loadLevelFile("res/level_1.txt", 40.0f);
 
+    auto startPos = ls::getTilePosition(ls::findTiles(ls::START)[0]);
+
+    // Set camera offset
     auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
     ls::setOffset(Vector2f(0, ho));
 
-    // Create player
-    auto startTiles = ls::findTiles(ls::START);
-    if (startTiles.empty()) {
-        cerr << "Error: No START tile found in level!" << endl;
-        return;
+    // Load player sprite texture
+    sf::Texture playerTexture;
+    if (!playerTexture.loadFromFile("res/img/mcafferty.png")) {
+        cerr << "Failed to load player sprite!" << std::endl;
     }
 
+    // Create player entity
     player = makeEntity();
-    player->setPosition(ls::getTilePosition(startTiles[0]));
-    auto s = player->addComponent<ShapeComponent>();
-    s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-    s->getShape().setFillColor(Color::Magenta);
-    s->getShape().setOrigin(Vector2f(10.f, 15.f));
+    player->setPosition(startPos);
+    cout << "Player spawned at: " << player->getPosition().x << ", " << player->getPosition().y << endl;
 
+    // Create and set the player sprite using SpriteComponent
+    auto spriteComponent = player->addComponent<SpriteComponent>(player);  // Add SpriteComponent to the player
+    spriteComponent->setTexture(std::make_shared<sf::Texture>(playerTexture));  // Set the sprite's texture
+
+    sf::Sprite playerSprite(playerTexture);
+    playerSprite.setTextureRect(sf::IntRect(0, 0, 32, 32));  // Assuming your sprite sheet uses 32x32 tiles
+    playerSprite.setOrigin(16.f, 24.f);  // Adjust the origin to center the sprite (if needed)
+    spriteComponent->getSprite() = playerSprite;  // Set the player sprite
+
+    // Add physics and other components
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
 
-    // Add physics colliders to level tiles
+    // Add physics colliders to level tiles.
     auto walls = ls::findTiles(ls::WALL);
     for (auto w : walls) {
         auto pos = ls::getTilePosition(w);
-        pos += Vector2f(20.f, 20.f); // offset to center
+        pos += Vector2f(20.f, 20.f);  // offset to center
         auto e = makeEntity();
         e->setPosition(pos);
         e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
     }
 
-    // Center camera on the player
-    auto& camera = Engine::GetView();
-    camera.setCenter(player->getPosition());
-    Engine::SetView(camera);
-
-    // Simulate long loading times
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     cout << "Scene 1 Load Done" << endl;
 
