@@ -18,3 +18,13 @@ EnemyAIComponent::EnemyAIComponent(Entity* p) : ActorMovementComponent(p) {
   _direction = Vector2f(1.0f, 0);
   _speed = 100.0f;
 }
+
+WheelsAIComponent::WheelsAIComponent(Entity* p)
+  : EnemyAIComponent(p) {
+    _speed = 300.0f; // faster speed for Wheels enemy AI
+  }
+
+  void WheelsAIComponent::update(double dt) {
+    // call base class update for patrol behaviour
+    EnemyAIComponent::update(dt);
+  }; 

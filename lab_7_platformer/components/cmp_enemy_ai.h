@@ -13,3 +13,13 @@ public:
 
   EnemyAIComponent() = delete;
 };
+
+class WheelsAIComponent : public EnemyAIComponent {
+
+public:
+  explicit WheelsAIComponent(Entity* p);
+
+  void update(double dt) override;
+
+  EnemyAIComponent() = delete;
+}; 

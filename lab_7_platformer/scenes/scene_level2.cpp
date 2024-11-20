@@ -60,6 +60,22 @@ void Level2Scene::Load() {
     // *********************************
   }
 
+  // WHEELS ENEMY CODE
+  {
+    auto wheelsEnemy = makeEntity();
+    wheelsEnemy->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) +
+                             Vector2f(100.f, 24.f)); // Offset position slightly
+    
+    auto s = wheelsEnemy->addComponent<ShapeComponent>();
+    s->setShape<sf::CircleShape>(16.f);
+    s->getShape().setFillColor(Color::Green); // testing colour for wheels, sprites to be added later 
+    s->getShape().setOrigin(Vector2f(16.f, 16.f));
+
+    // hurt component 
+    // wheelsEnemy->addComponent<HurtComponent>();
+
+  }
+
   // Create Turret
   {
     auto turret = makeEntity();
