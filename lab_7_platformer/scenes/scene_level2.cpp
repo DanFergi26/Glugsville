@@ -13,120 +13,116 @@ using namespace sf;
 static shared_ptr<Entity> player;
 
 void Level2Scene::Load() {
-  cout << "Scene 2 Load" << endl;
-  ls::loadLevelFile("res/level_2.txt", 40.0f);
-  auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
-  ls::setOffset(Vector2f(0, ho));
+    cout << "Scene 2 Load" << endl;
+    ls::loadLevelFile("res/level_2.txt", 40.0f);
+    auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
+    ls::setOffset(Vector2f(0, ho));
 
-  // Create player
-  {
-    // *********************************
-      auto startTiles = ls::findTiles(ls::START);
-      if (startTiles.empty()) {
-          cerr << "Error: No START tile found in level!" << endl;
-          return;
-      }
+    // Create player
+    {
+        // *********************************
+        player = makeEntity();
+        player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+        auto s = player->addComponent<ShapeComponent>();
+        s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
+        s->getShape().setFillColor(Color::Magenta);
+        s->getShape().setOrigin(Vector2f(10.f, 15.f));
 
-      player = makeEntity();
-      player->setPosition(ls::getTilePosition(startTiles[0]));
-      auto s = player->addComponent<ShapeComponent>();
-      s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-      s->getShape().setFillColor(Color::Magenta);
-      s->getShape().setOrigin(Vector2f(10.f, 15.f));
+        player->addTag("player");
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+    }
 
-    player->addTag("player");
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
-  }
+    // Create Enemy
+    {
+        auto enemy = makeEntity();
+        enemy->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) +
+            Vector2f(0, 24));
+        // *********************************
+        // Add HurtComponent
+        enemy->addComponent<HurtComponent>();
 
-  // Create Enemy
-  {
-    auto enemy = makeEntity();
-    enemy->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) +
-                       Vector2f(0, 24));
-    // *********************************
-    // Add HurtComponent
-    enemy->addComponent<HurtComponent>();
-
-    // Add ShapeComponent, Red 16.f Circle
-    auto s = enemy->addComponent<ShapeComponent>();
-    s->setShape<sf::CircleShape>(16.f);
-    s->getShape().setFillColor(Color::Red);
-    s->getShape().setOrigin(Vector2f(16.f, 16.f));
+        // Add ShapeComponent, Red 16.f Circle
+        auto s = enemy->addComponent<ShapeComponent>();
+        s->setShape<sf::CircleShape>(16.f);
+        s->getShape().setFillColor(Color::Red);
+        s->getShape().setOrigin(Vector2f(16.f, 16.f));
 
 
 
-    // Add EnemyAIComponent
-    enemy->addComponent<EnemyAIComponent>();
-    // *********************************
-  }
+        // Add EnemyAIComponent
+        enemy->addComponent<EnemyAIComponent>();
+        // *********************************
+    }
 
-  // WHEELS ENEMY CODE
-  {
-    auto wheelsEnemy = makeEntity();
-    wheelsEnemy->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) +
-                             Vector2f(100.f, 24.f)); // Offset position slightly
-    
-    auto s = wheelsEnemy->addComponent<ShapeComponent>();
-    s->setShape<sf::CircleShape>(16.f);
-    s->getShape().setFillColor(Color::Green); // testing colour for wheels, sprites to be added later 
-    s->getShape().setOrigin(Vector2f(16.f, 16.f));
+  
 
-    // hurt component 
-    // wheelsEnemy->addComponent<HurtComponent>();
+    // Create Turret
+    {
+        auto turret = makeEntity();
+        turret->setPosition(ls::getTilePosition(ls::findTiles('t')[0]) +
+            Vector2f(20, 0));
+        auto s = turret->addComponent<ShapeComponent>();
+        s->setShape<sf::CircleShape>(16.f, 3);
+        s->getShape().setFillColor(Color::Red);
+        s->getShape().setOrigin(Vector2f(16.f, 16.f));
+        turret->addComponent<EnemyTurretComponent>();
+    }
 
-  }
-
-  // Create Turret
-  {
-    auto turret = makeEntity();
-    turret->setPosition(ls::getTilePosition(ls::findTiles('t')[0]) +
-                        Vector2f(20, 0));
-    auto s = turret->addComponent<ShapeComponent>();
-    s->setShape<sf::CircleShape>(16.f, 3);
-    s->getShape().setFillColor(Color::Red);
-    s->getShape().setOrigin(Vector2f(16.f, 16.f));
-    turret->addComponent<EnemyTurretComponent>();
-  }
-
-  // Add physics colliders to level tiles.
-  {
-    // *********************************
-      auto walls = ls::findTiles(ls::WALL);
-      for (auto w : walls) {
-          auto pos = ls::getTilePosition(w);
-          pos += Vector2f(20.f, 20.f);
-          auto e = makeEntity();
-          e->setPosition(pos);
-          e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
+    // Add physics colliders to level tiles.
+    {
+        // *********************************
+        auto walls = ls::findTiles(ls::WALL);
+        for (auto w : walls) {
+            auto pos = ls::getTilePosition(w);
+            pos += Vector2f(20.f, 20.f);
+            auto e = makeEntity();
+            e->setPosition(pos);
+            e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
 
 
-      }
-  }
+        }
+    }
 
-  cout << " Scene 2 Load Done" << endl;
-  setLoaded(true);
+    cout << " Scene 2 Load Done" << endl;
+    setLoaded(true);
 }
 
 
 void Level2Scene::UnLoad() {
-  cout << "Scene 2 UnLoad" << endl;
-  player.reset();
-  ls::unload();
-  Scene::UnLoad();
+    cout << "Scene 2 UnLoad" << endl;
+    player.reset();
+    ls::unload();
+    Scene::UnLoad();
 }
 
 void Level2Scene::Update(const double& dt) {
-  Scene::Update(dt);
-  const auto pp = player->getPosition();
-  if (ls::getTileAt(pp) == ls::END) {
-    Engine::ChangeScene((Scene*)&level3);
-  } else if (!player->isAlive()) {
-    Engine::ChangeScene((Scene*)&level2);
-  }
+    // Center the view on the player, with constraints
+    auto windowSize = Engine::getWindowSize();
+    auto levelWidth = ls::getWidth() * 40.f;
+
+    Vector2f viewCenter = player->getPosition();
+    viewCenter.y = windowSize.y / 2.0f; // Center vertically
+    viewCenter.x = std::max(windowSize.x / 2.0f, viewCenter.x); // Prevent scrolling left out of bounds
+    viewCenter.x = std::min(levelWidth - windowSize.x / 2.0f, viewCenter.x); // Prevent scrolling past right boundary
+
+    // Set the new view
+    sf::View view;
+    view.setSize(Vector2f(windowSize.x, windowSize.y));
+    view.setCenter(viewCenter);
+    Engine::GetWindow().setView(view);
+   
+    Scene::Update(dt);
+    const auto pp = player->getPosition();
+    if (ls::getTileAt(pp) == ls::END) {
+        Engine::ChangeScene((Scene*)&level3);
+    }
+    else if (!player->isAlive()) {
+        Engine::ChangeScene((Scene*)&level2);
+    }
 
 }
 
 void Level2Scene::Render() {
-  ls::render(Engine::GetWindow());
-  Scene::Render();
+    ls::render(Engine::GetWindow());
+    Scene::Render();
 }
