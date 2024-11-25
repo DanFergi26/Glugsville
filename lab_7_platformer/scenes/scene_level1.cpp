@@ -1,4 +1,3 @@
-// Include necessary headers
 #include "scene_level1.h"
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
@@ -26,12 +25,30 @@ void Level1Scene::Load() {
     {
         player = makeEntity();
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-        auto s = player->addComponent<ShapeComponent>();
-        s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-        s->getShape().setFillColor(Color::Magenta);
-        s->getShape().setOrigin(Vector2f(10.f, 15.f));
 
-        player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+        // Load texture for the player
+        auto texture = make_shared<sf::Texture>();
+        if (!texture->loadFromFile("res/img/mcafferty.png")) {
+            cerr << "Failed to load player sprite!" << endl;
+        }
+        else {
+            auto spriteComp = player->addComponent<SpriteComponent>();
+            spriteComp->setTexture(texture); // Assign texture to the SpriteComponent
+
+            // Scale the sprite to fit the player size (20x30)
+            sf::Vector2f targetSize(30.f, 40.f);
+            sf::Vector2u textureSize = texture->getSize();
+            spriteComp->getSprite().setScale(
+                targetSize.x / textureSize.x,
+                targetSize.y / textureSize.y
+            );
+
+            // Set the origin of the sprite to its center
+            spriteComp->getSprite().setOrigin(textureSize.x / 2.f, textureSize.y / 2.f);
+        }
+
+        // Add physics to the player
+        player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 40.f));
     }
 
     // Add physics colliders to level tiles.
@@ -39,7 +56,7 @@ void Level1Scene::Load() {
         auto walls = ls::findTiles(ls::WALL);
         for (auto w : walls) {
             auto pos = ls::getTilePosition(w);
-            pos += Vector2f(20.f, 20.f); //offset to center
+            pos += Vector2f(20.f, 20.f); // Offset to center
             auto e = makeEntity();
             e->setPosition(pos);
             e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
