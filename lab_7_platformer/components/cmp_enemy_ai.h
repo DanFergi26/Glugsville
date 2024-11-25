@@ -21,5 +21,5 @@ public:
 
   void update(double dt) override;
 
-  EnemyAIComponent() = delete;
+  WheelsAIComponent() = delete;
 }; 
