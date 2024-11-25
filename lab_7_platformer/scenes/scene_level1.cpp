@@ -78,9 +78,7 @@ void Level1Scene::UnLoad() {
 }
 
 void Level1Scene::Update(const double& dt) {
-    if (ls::getTileAt(player->getPosition()) == ls::END) {
-        Engine::ChangeScene((Scene*)&level2);
-    }
+    
 
     // Center the view on the player, with constraints
     auto windowSize = Engine::getWindowSize();
@@ -96,7 +94,10 @@ void Level1Scene::Update(const double& dt) {
     view.setSize(Vector2f(windowSize.x, windowSize.y));
     view.setCenter(viewCenter);
     Engine::GetWindow().setView(view);
-
+    
+    if (ls::getTileAt(player->getPosition()) == ls::END) {
+        Engine::ChangeScene((Scene*)&level2);
+    }
     Scene::Update(dt);
 }
 
