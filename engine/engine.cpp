@@ -83,7 +83,11 @@ void Engine::Render(RenderWindow& window) {
 
 void Engine::Start(unsigned int width, unsigned int height,
                    const std::string& gameName, Scene* scn) {
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> df-dev
     RenderWindow window(VideoMode(width, height), gameName);
   _gameName = gameName;
   _window = &window;
