@@ -83,11 +83,8 @@ void Engine::Render(RenderWindow& window) {
 
 void Engine::Start(unsigned int width, unsigned int height,
                    const std::string& gameName, Scene* scn) {
-    unsigned int desiredWidth = 1600; // Example: Wider window
-   
-
-    // Override width and height with hardcoded values
-    RenderWindow window(VideoMode(desiredWidth, height), gameName);
+ 
+    RenderWindow window(VideoMode(width, height), gameName);
   _gameName = gameName;
   _window = &window;
   _view = sf::View(sf::FloatRect(0, 0, width, height));

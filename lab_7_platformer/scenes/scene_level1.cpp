@@ -17,14 +17,14 @@ static shared_ptr<Entity> player;
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
     ls::loadLevelFile("res/level_1.txt", 40.0f);
-
-    auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
+    auto ho = max(0.f, Engine::getWindowSize().y - ((ls::getHeight() + 5) * 40.f));
     ls::setOffset(Vector2f(0, ho));
 
     // Create player
     {
         player = makeEntity();
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+
 
         // Load texture for the player
         auto texture = make_shared<sf::Texture>();
@@ -49,6 +49,7 @@ void Level1Scene::Load() {
 
         // Add physics to the player
         player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 40.f));
+
     }
 
     // Add physics colliders to level tiles.

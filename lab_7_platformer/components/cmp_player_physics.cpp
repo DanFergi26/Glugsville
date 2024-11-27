@@ -19,7 +19,7 @@ bool PlayerPhysicsComponent::isGrounded() const {
     bool onTop = numPoints > 0;
     // If all contacts are below the player.
     for (int j = 0; j < numPoints; j++) {
-      onTop &= (manifold.points[j].y < pos.y - halfPlrHeigt);
+        onTop &= (manifold.points[j].y < pos.y - halfPlrHeigt + 0.1f);
     }
     if (onTop) {
       return true;
