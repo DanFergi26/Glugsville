@@ -13,6 +13,6 @@ w                  w           |
 w            www ww            |
 w           w   w              |
 w          w                   |
-w s       w                    |
+ws        w                    |
 w  w     ww                    |
 wwww   wwww                    |
