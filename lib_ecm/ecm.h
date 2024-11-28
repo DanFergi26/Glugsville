@@ -56,6 +56,17 @@ public:
   Scene* const scene;
   Entity(Scene* const s);
 
+  template <typename T>
+  T* getComponent() {
+      for (auto& component : _components) {
+          T* casted = dynamic_cast<T*>(component.get());
+          if (casted) {
+              return casted;
+          }
+      }
+      return nullptr;
+  }
+
   virtual ~Entity();
 
   virtual void update(double dt);

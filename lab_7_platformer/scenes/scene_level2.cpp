@@ -1,6 +1,7 @@
 #include "scene_level2.h"
 #include "../components/cmp_enemy_ai.h"
 #include "../components/cmp_enemy_turret.h"
+#include "../components/cmp_player_turret.h" 
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_physics.h"
 #include "../components/cmp_player_physics.h"
@@ -47,6 +48,7 @@ void Level2Scene::Load() {
 
         // Add physics to the player
         player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 40.f));
+        player->addComponent<PlayerTurretComponent>();
     }
 
     // Create Enemy
