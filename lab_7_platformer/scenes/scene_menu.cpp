@@ -8,21 +8,28 @@ using namespace std;
 using namespace sf;
 
 void MenuScene::Load() {
-  cout << "Menu Load \n";
-  {
-    auto txt = makeEntity();
-    auto t = txt->addComponent<TextComponent>(
-        "Platformer\nPress Space to Start");
-  }
-  setLoaded(true);
+    cout << "Menu Load \n";
+    {
+        auto txt = makeEntity();
+        auto t = txt->addComponent<TextComponent>(
+            "Glugsville\nPress:\nSpace to Start\nQ to quit");
+    }
+    setLoaded(true);
 }
 
 void MenuScene::Update(const double& dt) {
-  // cout << "Menu Update "<<dt<<"\n";
+    // cout << "Menu Update "<<dt<<"\n";
 
-  if (sf::Keyboard::isKeyPressed(Keyboard::Space)) {
-    Engine::ChangeScene(&level1);
-  }
+    // Change scene if Space is pressed
+    if (sf::Keyboard::isKeyPressed(Keyboard::Space)) {
+        Engine::ChangeScene(&level1);
+    }
 
-  Scene::Update(dt);
+    // Exit the game if Q is pressed
+    if (sf::Keyboard::isKeyPressed(Keyboard::Q)) {
+        std::cout << "Exiting the game..." << std::endl;
+        exit(0); // Correct way to exit the program
+    }
+
+    Scene::Update(dt);
 }

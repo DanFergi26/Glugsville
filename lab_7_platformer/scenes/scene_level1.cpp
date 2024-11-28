@@ -7,7 +7,6 @@
 #include <SFML/Graphics.hpp>   // For SFML components like Vector2f, Color, etc.
 #include <SFML/Window.hpp>     // For SFML window and events
 #include <SFML/System.hpp> 
-#include <SFML/Audio.hpp>
 #include <iostream>             // For std::cout and std::endl
 #include <thread>               // For std::this_thread::sleep_for
 

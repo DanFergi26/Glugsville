@@ -104,18 +104,28 @@ void Level2Scene::UnLoad() {
 }
 
 void Level2Scene::Update(const double& dt) {
+    // Get the SpriteComponent of the player
+    bool isLeft = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
+    auto spriteComp = player->getComponent<SpriteComponent>();
+
+    //Flip sprite horizontally if the left arrow key is pressed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        spriteComp->getSprite().setScale(-abs(spriteComp->getSprite().getScale().x), spriteComp->getSprite().getScale().y);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        spriteComp->getSprite().setScale(abs(spriteComp->getSprite().getScale().x), spriteComp->getSprite().getScale().y);
+    }
+
     // Center the view on the player, with constraints
     auto windowSize = Engine::getWindowSize();
     auto levelWidth = ls::getWidth() * 40.f;
 
     Vector2f viewCenter = player->getPosition();
-    viewCenter.y = windowSize.y / 2.0f; // Center vertically
+    viewCenter.y = windowSize.y / 2.0f;  // Center vertically
+    viewCenter.x = std::max(windowSize.x / 2.0f, viewCenter.x);  // Prevent scrolling left out of bounds
+    viewCenter.x = std::min(levelWidth - windowSize.x / 2.0f, viewCenter.x);  // Prevent scrolling past right boundary
 
-    // Ensure the view is within the level bounds (left and right)
-    viewCenter.x = std::max(windowSize.x / 2.0f, viewCenter.x); // Prevent scrolling left out of bounds
-    viewCenter.x = std::min(levelWidth - windowSize.x / 2.0f, viewCenter.x); // Prevent scrolling past right boundary
-
-    // Set the new view (only modify the view size and center)
+    // Set the new view
     sf::View view;
     view.setSize(Vector2f(windowSize.x, windowSize.y));
     view.setCenter(viewCenter);

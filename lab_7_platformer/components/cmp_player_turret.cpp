@@ -4,13 +4,12 @@
 #include "engine.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
-using namespace std;
-using namespace sf;
+#include "LevelSystem.h"
 
 bool isFacingLeft;
 
 PlayerTurretComponent::PlayerTurretComponent(Entity* p)
-    : Component(p), _firetime(0.f), shootCooldown(0.5f) {}  // Initialize _firetime and shootCooldown
+    : Component(p), _firetime(0.f), shootCooldown(0.5f) {}
 
 void PlayerTurretComponent::update(double dt) {
     // Update fire time

@@ -23,7 +23,10 @@ public:
     END = 'e',
     WALL = 'w',
     ENEMY = 'n',
-    WAYPOINT = '+'
+    WAYPOINT = '+',
+    BUCKY = 'b',
+    CHIPPY = 'c',
+    GEAR = 'g'
   };
 
   static Tile getTile(sf::Vector2ul);
