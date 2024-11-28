@@ -99,6 +99,12 @@ void Level2Scene::Load() {
 void Level2Scene::UnLoad() {
     cout << "Scene 2 UnLoad" << endl;
     player.reset();
+    if (!player->isAlive()) {
+        player = makeEntity();
+        player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+        player->addTag("player");
+    }
+
     ls::unload();
     Scene::UnLoad();
 }

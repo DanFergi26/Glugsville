@@ -13,8 +13,9 @@ public:
 
   void Render() override;
 
+  std::shared_ptr<Entity> player;
+
   private:
   sf::Music music_;
-
 
 };

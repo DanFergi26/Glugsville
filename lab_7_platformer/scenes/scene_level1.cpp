@@ -26,6 +26,7 @@ void Level1Scene::Load() {
     music_.openFromFile("res/music/level1.wav");
     music_.setLoop(true);
     music_.play();
+    
 
     // Create player
     {
