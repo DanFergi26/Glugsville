@@ -7,7 +7,7 @@
 #include <SFML/Graphics.hpp>   // For SFML components like Vector2f, Color, etc.
 #include <SFML/Window.hpp>     // For SFML window and events
 #include <SFML/System.hpp> 
-#include <SFML/Audio.hpp>
+#include <SFML/Audio.hpp>       // For SFML audio
 #include <iostream>             // For std::cout and std::endl
 #include <thread>               // For std::this_thread::sleep_for
 
@@ -21,6 +21,11 @@ void Level1Scene::Load() {
     ls::loadLevelFile("res/level_1.txt", 40.0f);
     auto ho = max(0.f, Engine::getWindowSize().y - ((ls::getHeight() + 5) * 40.f));
     ls::setOffset(Vector2f(0, ho));
+
+    // code for music class etc
+    music_.openFromFile("res/music/level1.wav");
+    music_.setLoop(true);
+    music_.play();
 
     // Create player
     {
@@ -79,6 +84,7 @@ void Level1Scene::UnLoad() {
     player.reset();
     ls::unload();
     Scene::UnLoad();
+    music_.stop();
 }
 
 void Level1Scene::Update(const double& dt) {
