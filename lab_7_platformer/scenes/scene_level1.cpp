@@ -18,6 +18,7 @@ static shared_ptr<Entity> player;
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
     ls::loadLevelFile("res/level_1.txt", 40.0f);
+
     auto ho = max(0.f, Engine::getWindowSize().y - ((ls::getHeight() + 5) * 40.f));
     ls::setOffset(Vector2f(0, ho));
 
@@ -25,7 +26,6 @@ void Level1Scene::Load() {
     {
         player = makeEntity();
         player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-
 
         // Load texture for the player
         auto texture = make_shared<sf::Texture>();
@@ -51,10 +51,15 @@ void Level1Scene::Load() {
         // Add physics to the player
         player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 40.f));
         player->addComponent<PlayerTurretComponent>();
-
     }
 
-    // Add physics colliders to level tiles.
+    // Load texture for the wall tiles ('w')
+    auto wallTexture = make_shared<sf::Texture>();
+    if (!wallTexture->loadFromFile("res/img/groundTile1.png")) {
+        cerr << "Failed to load groundTile1 texture!" << endl;
+    }
+
+    // Add physics colliders and sprites for wall tiles ('w')
     {
         auto walls = ls::findTiles(ls::WALL);
         for (auto w : walls) {
@@ -62,6 +67,23 @@ void Level1Scene::Load() {
             pos += Vector2f(20.f, 20.f); // Offset to center
             auto e = makeEntity();
             e->setPosition(pos);
+
+            // Add sprite component with wall texture
+            auto spriteComp = e->addComponent<SpriteComponent>();
+            spriteComp->setTexture(wallTexture);  // Set wall texture
+
+            // Scale the sprite to match tile size (40x40)
+            sf::Vector2f targetSize(40.f, 40.f);
+            sf::Vector2u textureSize = wallTexture->getSize();
+            spriteComp->getSprite().setScale(
+                targetSize.x / textureSize.x,
+                targetSize.y / textureSize.y
+            );
+
+            // Set the origin of the sprite to its center
+            spriteComp->getSprite().setOrigin(textureSize.x / 2.f, textureSize.y / 2.f);
+
+            // Add physics component to the wall entity
             e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
         }
     }
@@ -85,7 +107,7 @@ void Level1Scene::Update(const double& dt) {
     bool isLeft = sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
     auto spriteComp = player->getComponent<SpriteComponent>();
 
-    //Flip sprite horizontally if the left arrow key is pressed
+    // Flip sprite horizontally if the left arrow key is pressed
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
         spriteComp->getSprite().setScale(-abs(spriteComp->getSprite().getScale().x), spriteComp->getSprite().getScale().y);
     }
@@ -113,7 +135,6 @@ void Level1Scene::Update(const double& dt) {
     }
     Scene::Update(dt);
 }
-
 
 void Level1Scene::Render() {
     ls::render(Engine::GetWindow());

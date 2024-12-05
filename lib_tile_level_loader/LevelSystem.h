@@ -24,7 +24,9 @@ public:
     WALL = 'w',
     ENEMY = 'n',
     WAYPOINT = '+',
-    BUCKY = 'b',
+    HOTWHEELS = 'h',
+    WILLYWALL = 'b',
+    POISON = 'p',
     CHIPPY = 'c',
     GEAR = 'g'
   };
