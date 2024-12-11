@@ -2,24 +2,19 @@
 
 #include "cmp_actor_movement.h"
 
-class EnemyAIComponent : public ActorMovementComponent {
+class EnemyAIComponent : public Component {
 protected:
-  sf::Vector2f _direction;
+    float _speed;
+    bool _flipSprite;  // New: Flag to enable sprite flipping based on direction
 
 public:
-  void update(double dt) override;
+    void update(double dt) override;
+    void render() override {}
 
-  explicit EnemyAIComponent(Entity* p);
+    // New: Method to enable sprite flipping
+    void setFlipSpriteOnDirection(bool flip) { _flipSprite = flip; }
 
-  EnemyAIComponent() = delete;
+    explicit EnemyAIComponent(Entity* p);
+    EnemyAIComponent() = delete;
 };
 
-class WheelsAIComponent : public EnemyAIComponent {
-
-public:
-  explicit WheelsAIComponent(Entity* p);
-
-  void update(double dt) override;
-
-  WheelsAIComponent() = delete;
-}; 

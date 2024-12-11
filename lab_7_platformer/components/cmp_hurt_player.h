@@ -18,6 +18,7 @@ public:
 
 	// Function to play the hurt sound
 	void playHurtSound();
+	void playEnemySound();
 
 	explicit HurtComponent(Entity* p);
 	HurtComponent() = delete;

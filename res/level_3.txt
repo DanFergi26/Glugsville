@@ -1,5 +1,5 @@
 w                                                  www        w
-w                                                 w w w       w
+w                                                   i         w
 w                                                   t         w
 w                                                             w
 w                                                             w
@@ -13,6 +13,6 @@ w                                                 w           |
 w                                           www www           |
 w                                          w                  |
 w                                         w                   |
-ws                                       w                    |
-w  w                                    ww                    |
-wwwwwww wwwwwwwwwwww  wwwwww  ww  wwwwwwww                    |
+ws                          ww           w                    |
+w  w      w      n w      w     w      ww                     |
+wwwwwww wwwwwwwwwwww  wwww        wwwwwwww                    |

@@ -22,6 +22,7 @@ public:
     START = 's',
     END = 'e',
     WALL = 'w',
+    WINDOW = 'i',
     ENEMY = 'n',
     WAYPOINT = '+',
     HOTWHEELS = 'h',

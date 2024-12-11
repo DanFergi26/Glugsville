@@ -8,10 +8,12 @@
 #include "scenes/scene_level5.h"
 #include "scenes/scene_level6.h"
 #include "scenes/scene_level7.h"
+
 #include "scenes/scene_menu.h"
 #include "scenes/scene_menu1.h"
 #include "scenes/scene_menu2.h"
 #include "scenes/scene_menu3.h"
+#include "scenes/scene_menu4.h"
 
 
 
@@ -19,6 +21,7 @@ extern MenuScene menu;
 extern Menu1Scene menu1;
 extern Menu2Scene menu2;
 extern Menu3Scene menu3;
+extern Menu4Scene menu4;
 extern Level1Scene level1;
 extern Level2Scene level2;
 extern Level3Scene level3;

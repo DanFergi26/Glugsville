@@ -14,8 +14,9 @@ Menu2Scene menu2;
 Level4Scene level4;
 Level5Scene level5;
 Level6Scene level6;
-Level7Scene level7;
 Menu3Scene menu3;
+Level7Scene level7;
+Menu4Scene menu4;
 
 int main() {
   Engine::Start(1920, 1080, "Platformer",&menu);

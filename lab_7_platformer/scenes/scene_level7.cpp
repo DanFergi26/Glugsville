@@ -145,7 +145,7 @@ void Level7Scene::Update(const double& dt) {
     // Check for level completion or player death
     const auto pp = player->getPosition();
     if (ls::getTileAt(pp) == ls::END) {
-        Engine::ChangeScene((Scene*)&level1);
+        Engine::ChangeScene((Scene*)&menu4);
     }
     else if (!player->isAlive()) {
         Engine::ChangeScene((Scene*)&level7);
