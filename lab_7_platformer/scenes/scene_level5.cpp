@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>   // For SFML components like Vector2f, Color, etc.
 #include <SFML/Window.hpp>     // For SFML window and events
 #include <SFML/System.hpp> 
+#include <SFML/Audio.hpp> 
 #include <iostream>             // For std::cout and std::endl
 #include <thread>               // For std::this_thread::sleep_for
 
@@ -14,6 +15,7 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+static sf::Music backgroundMusic;
 
 void Level5Scene::Load() {
     cout << " Scene 5 Load" << endl;
@@ -21,6 +23,15 @@ void Level5Scene::Load() {
 
     auto ho = max(0.f, Engine::getWindowSize().y - ((ls::getHeight() + 8) * 40.f));
     ls::setOffset(Vector2f(0, ho));
+
+    // Load and play background music
+    if (!backgroundMusic.openFromFile("res/music/scotland-the-brave-8-bit-chiptune.wav")) {
+        cerr << "Failed to load background music!" << endl;
+    }
+    else {
+        backgroundMusic.setLoop(true); // Enable looping
+        backgroundMusic.play();       // Start playing music
+    }
 
     // Create player
     {
@@ -98,6 +109,7 @@ void Level5Scene::Load() {
 void Level5Scene::UnLoad() {
     cout << "Scene 5 Unload" << endl;
     player.reset();
+    backgroundMusic.stop();
     ls::unload();
     Scene::UnLoad();
 }

@@ -3,19 +3,34 @@
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_player_turret.h"
 #include "../game.h"
+#include "../components/cmp_sprite.h"
 #include "../components/cmp_bullet.h"
 #include <LevelSystem.h>
+#include <SFML/Graphics.hpp>   // For SFML components like Vector2f, Color, etc.
+#include <SFML/Audio.hpp>      // For SFML audio components
+#include <SFML/Window.hpp>     // For SFML window and events
+#include <SFML/System.hpp> 
 #include <iostream>
 using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+static sf::Music backgroundMusic;
 
 void Level3Scene::Load() {
     cout << "Scene 3 Load" << endl;
     ls::loadLevelFile("res/level_3.txt", 40.0f);
     auto ho = Engine::getWindowSize().y - ((ls::getHeight() + 8) * 40.f);
     ls::setOffset(Vector2f(0, ho));
+
+    // Load and play background music
+    if (!backgroundMusic.openFromFile("res/music/scotland-the-brave-8-bit-chiptune.wav")) {
+        cerr << "Failed to load background music!" << endl;
+    }
+    else {
+        backgroundMusic.setLoop(true); // Enable looping
+        backgroundMusic.play();       // Start playing music
+    }
 
     // Create player
     {
@@ -48,42 +63,51 @@ void Level3Scene::Load() {
             player->addComponent<PlayerPhysicsComponent>(Vector2f(30.f, 40.f));
             player->addComponent<PlayerTurretComponent>();
 
+            // Load texture for the wall tiles ('w')
+            auto wallTexture = make_shared<sf::Texture>();
+            if (!wallTexture->loadFromFile("res/img/groundTile1.png")) {
+                cerr << "Failed to load groundTile1 texture!" << endl;
+            }
 
-
-
-
-
-
-
-            // *********************************
-        }
-
-        // Add physics colliders to level tiles.
-        {
-            // *********************************
-
+            // Add physics colliders and sprites for wall tiles ('w')
             {
                 auto walls = ls::findTiles(ls::WALL);
                 for (auto w : walls) {
                     auto pos = ls::getTilePosition(w);
-                    pos += Vector2f(20.f, 20.f); //offset to center
+                    pos += Vector2f(20.f, 20.f); // Offset to center
                     auto e = makeEntity();
                     e->setPosition(pos);
+
+                    // Add sprite component with wall texture
+                    auto spriteComp = e->addComponent<SpriteComponent>();
+                    spriteComp->setTexture(wallTexture);  // Set wall texture
+
+                    // Scale the sprite to match tile size (40x40)
+                    sf::Vector2f targetSize(40.f, 40.f);
+                    sf::Vector2u textureSize = wallTexture->getSize();
+                    spriteComp->getSprite().setScale(
+                        targetSize.x / textureSize.x,
+                        targetSize.y / textureSize.y
+                    );
+
+                    // Set the origin of the sprite to its center
+                    spriteComp->getSprite().setOrigin(textureSize.x / 2.f, textureSize.y / 2.f);
+
+                    // Add physics component to the wall entity
                     e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
                 }
             }
 
-            // *********************************
+            cout << " Scene 3 Load Done" << endl;
+            setLoaded(true);
         }
-
-        cout << " Scene 3 Load Done" << endl;
-        setLoaded(true);
     }
 }
 
 void Level3Scene::UnLoad() {
     cout << "Scene 3 UnLoad" << endl;
     player.reset();
+    backgroundMusic.stop();
     ls::unload();
     Scene::UnLoad();
 }

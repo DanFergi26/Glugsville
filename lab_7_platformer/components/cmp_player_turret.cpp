@@ -43,27 +43,45 @@ void PlayerTurretComponent::fire() const {
         return;
     }
 
-    // Create the bullet entity
+    // Create the bullet entity (knife in this case)
     auto bullet = _parent->scene->makeEntity();
 
     // Set the spawn position based on the player's facing direction
     sf::Vector2f spawnOffset = (isFacingLeft) ? sf::Vector2f(-10.f, 0.f) : sf::Vector2f(10.f, 0.f);
     bullet->setPosition(_parent->getPosition() + spawnOffset);  // Bullet starts at the player's position offset
 
-    // Add components to the bullet (Shape, Bullet, Physics)
-    bullet->addComponent<BulletComponent>();
-    auto s = bullet->addComponent<ShapeComponent>();
-    s->setShape<sf::CircleShape>(8.f);  // Bullet size
-    s->getShape().setFillColor(sf::Color::Red);
-    s->getShape().setOrigin(sf::Vector2f(8.f, 8.f)); // Center origin of the bullet
+    // Create a texture for the bullet (knife)
+    std::shared_ptr<sf::Texture> bulletTexture = std::make_shared<sf::Texture>();
+    if (!bulletTexture->loadFromFile("res/img/knife.png")) { // Replace with your image path
+        std::cerr << "Error loading bullet texture!" << std::endl;
+        return;
+    }
 
-    // Add PhysicsComponent to the bullet
+    // Add SpriteComponent to the bullet entity and set the texture
+    auto spriteComp = bullet->addComponent<SpriteComponent>();
+    spriteComp->setTexture(bulletTexture);
+
+    // Scale down the knife (e.g., to 1/10th of the original size)
+    spriteComp->getSprite().setScale(0.05f, 0.05f);
+
+    // Flip the knife sprite based on the player's facing direction
+    if (isFacingLeft) {
+        spriteComp->getSprite().setScale(-abs(spriteComp->getSprite().getScale().x), spriteComp->getSprite().getScale().y);
+    }
+    else {
+        spriteComp->getSprite().setScale(abs(spriteComp->getSprite().getScale().x), spriteComp->getSprite().getScale().y);
+    }
+
+    // Add BulletComponent to handle lifetime and collision detection
+    bullet->addComponent<BulletComponent>();
+
+    // Add PhysicsComponent to the bullet for handling physics
     auto p = bullet->addComponent<PhysicsComponent>(true, sf::Vector2f(8.f, 8.f));
     p->setRestitution(0.4f);
     p->setFriction(0.005f);
 
     // Bullet speed
-    float bulletSpeed = 50.f;
+    float bulletSpeed = 15.f;
 
     // Direction vector: Default is right (1.f in x)
     // Bullet direction depends on whether the player is facing left or right

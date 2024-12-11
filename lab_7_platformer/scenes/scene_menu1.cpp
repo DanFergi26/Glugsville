@@ -19,6 +19,14 @@ void Menu1Scene::Load() {
     auto t = txt->addComponent<TextComponent>(
         "Glugsville\n Level 1:\n Buchanan Street");
 
+    auto& text = t->getText(); // Get the sf::Text object
+
+    // Center the text on the screen
+    auto windowSize = Engine::getWindowSize();
+    auto textSize = text.getLocalBounds(); // Get the bounding box of the text
+    text.setOrigin(textSize.width / 2.f, textSize.height / 2.f); // Set the origin to the center of the text
+    text.setPosition(Vector2f(windowSize.x / 2.f, windowSize.y / 2.f)); // Position the text at the center of the window
+
     setLoaded(true);
     elapsedTime = 0.f; // Reset elapsed time
 }
@@ -28,7 +36,7 @@ void Menu1Scene::Update(const double& dt) {
     elapsedTime += static_cast<float>(dt);
 
     // Transition to the next scene after 10 seconds
-    if (elapsedTime >= 2.f) {
+    if (elapsedTime >= 2.f) { // Change to 10 seconds instead of 2
         Engine::ChangeScene(&level1);
         return;
     }

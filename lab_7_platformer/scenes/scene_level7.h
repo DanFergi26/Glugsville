@@ -1,15 +1,15 @@
 #pragma once
-
 #include "engine.h"
 
-class Menu1Scene : public Scene {
+class Level7Scene : public Scene {
 public:
-	Menu1Scene() = default;
-	~Menu1Scene() override = default;
-
 	void Load() override;
 
+	void UnLoad() override;
+
 	void Update(const double& dt) override;
+
+	void Render() override;
 
 
 };
