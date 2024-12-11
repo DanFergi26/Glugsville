@@ -276,6 +276,10 @@ void Level3Scene::Update(const double& dt) {
 }
 
 void Level3Scene::Render() {
+     // Set the background color to a solid color (e.g., light blue)
+    Engine::GetWindow().clear(sf::Color(135, 206, 250));  // Sky blue background (RGB: 135, 206, 250)
+
+    // Render the rest of the scene (level and entities)
     ls::render(Engine::GetWindow());
     Scene::Render();
 }

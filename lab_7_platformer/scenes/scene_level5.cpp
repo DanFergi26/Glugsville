@@ -241,6 +241,10 @@ void Level5Scene::Update(const double& dt) {
 
 
 void Level5Scene::Render() {
+           // Set the background color to a solid color
+    Engine::GetWindow().clear(sf::Color(220, 222, 222));  // off white
+
+    // Render the rest of the scene (level and entities)
     ls::render(Engine::GetWindow());
     Scene::Render();
 }
