@@ -22,7 +22,7 @@ void MenuScene::Update(const double& dt) {
 
     // Change scene if Space is pressed
     if (sf::Keyboard::isKeyPressed(Keyboard::Space)) {
-        Engine::ChangeScene(&level1);
+        Engine::ChangeScene(&menu1);
     }
 
     // Exit the game if Q is pressed

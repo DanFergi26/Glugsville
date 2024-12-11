@@ -18,7 +18,7 @@ public:
   typedef unsigned char Tile;
 
   enum TILES {
-    EMPTY = ' ',
+    EMPTY = '-',
     START = 's',
     END = 'e',
     WALL = 'w',

@@ -118,14 +118,15 @@ void Level3Scene::Update(const double& dt) {
     view.setCenter(viewCenter);
     Engine::GetWindow().setView(view);
 
-    Scene::Update(dt);
+    
     const auto pp = player->getPosition();
     if (ls::getTileAt(pp) == ls::END) {
-        Engine::ChangeScene((Scene*)&level1);
+        Engine::ChangeScene((Scene*)&menu2);
     }
     else if (!player->isAlive()) {
         Engine::ChangeScene((Scene*)&level3);
     }
+    Scene::Update(dt);
 }
 
     

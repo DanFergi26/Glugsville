@@ -16,7 +16,7 @@ static shared_ptr<Entity> player;
 void Level2Scene::Load() {
     cout << "Scene 2 Load" << endl;
     ls::loadLevelFile("res/level_2.txt", 40.0f);
-    auto ho = Engine::getWindowSize().y - ((ls::getHeight() + 5) * 40.f);
+    auto ho = Engine::getWindowSize().y - ((ls::getHeight() + 8) * 40.f);
     ls::setOffset(Vector2f(0, ho));
 
     // Create player
@@ -51,20 +51,24 @@ void Level2Scene::Load() {
         player->addComponent<PlayerTurretComponent>();
     }
 
-    // Create Enemy
+    // Create Enemies
     {
-        auto enemy = makeEntity();
-        enemy->setPosition(ls::getTilePosition(ls::findTiles(ls::ENEMY)[0]) +
-            Vector2f(0, 24));
-        enemy->addTag("enemy");
-        enemy->addComponent<HurtComponent>();
+        auto enemyPositions = ls::findTiles(ls::ENEMY); // Find all 'n' tiles
 
-        auto s = enemy->addComponent<ShapeComponent>();
-        s->setShape<sf::CircleShape>(16.f);
-        s->getShape().setFillColor(Color::Red);
-        s->getShape().setOrigin(Vector2f(16.f, 16.f));
+        // Iterate over each enemy position
+        for (const auto& pos : enemyPositions) {
+            auto enemy = makeEntity();
+            enemy->setPosition(ls::getTilePosition(pos) + Vector2f(0, 24)); // Set position with offset
+            enemy->addTag("enemy");
+            enemy->addComponent<HurtComponent>();
 
-        enemy->addComponent<EnemyAIComponent>();
+            auto s = enemy->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(16.f); // Set shape for the enemy
+            s->getShape().setFillColor(Color::Red);
+            s->getShape().setOrigin(Vector2f(16.f, 16.f)); // Center the origin
+
+            enemy->addComponent<EnemyAIComponent>(); // Add AI component to the enemy
+        }
     }
 
     // Create Turret
@@ -79,14 +83,37 @@ void Level2Scene::Load() {
         turret->addComponent<EnemyTurretComponent>();
     }
 
-    // Add physics colliders to level tiles.
+    // Load texture for the wall tiles ('w')
+    auto wallTexture = make_shared<sf::Texture>();
+    if (!wallTexture->loadFromFile("res/img/groundTile1.png")) {
+        cerr << "Failed to load groundTile1 texture!" << endl;
+    }
+
+    // Add physics colliders and sprites for wall tiles ('w')
     {
         auto walls = ls::findTiles(ls::WALL);
         for (auto w : walls) {
             auto pos = ls::getTilePosition(w);
-            pos += Vector2f(20.f, 20.f);
+            pos += Vector2f(20.f, 20.f); // Offset to center
             auto e = makeEntity();
             e->setPosition(pos);
+
+            // Add sprite component with wall texture
+            auto spriteComp = e->addComponent<SpriteComponent>();
+            spriteComp->setTexture(wallTexture);  // Set wall texture
+
+            // Scale the sprite to match tile size (40x40)
+            sf::Vector2f targetSize(40.f, 40.f);
+            sf::Vector2u textureSize = wallTexture->getSize();
+            spriteComp->getSprite().setScale(
+                targetSize.x / textureSize.x,
+                targetSize.y / textureSize.y
+            );
+
+            // Set the origin of the sprite to its center
+            spriteComp->getSprite().setOrigin(textureSize.x / 2.f, textureSize.y / 2.f);
+
+            // Add physics component to the wall entity
             e->addComponent<PhysicsComponent>(false, Vector2f(40.f, 40.f));
         }
     }

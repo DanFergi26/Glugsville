@@ -2,9 +2,12 @@
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_player_turret.h" 
+#include "../components/cmp_enemy_ai.h"
+#include "../components/cmp_hurt_player.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <SFML/Graphics.hpp>   // For SFML components like Vector2f, Color, etc.
+#include <SFML/Audio.hpp>      // For SFML audio components
 #include <SFML/Window.hpp>     // For SFML window and events
 #include <SFML/System.hpp> 
 #include <iostream>             // For std::cout and std::endl
@@ -14,13 +17,23 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+static sf::Music backgroundMusic; // Music object for the background music
 
 void Level1Scene::Load() {
     cout << " Scene 1 Load" << endl;
     ls::loadLevelFile("res/level_1.txt", 40.0f);
 
-    auto ho = max(0.f, Engine::getWindowSize().y - ((ls::getHeight() + 5) * 40.f));
+    auto ho = max(0.f, Engine::getWindowSize().y - ((ls::getHeight() + 8) * 40.f));
     ls::setOffset(Vector2f(0, ho));
+
+    // Load and play background music
+    if (!backgroundMusic.openFromFile("res/music/scotland-the-brave-8-bit-chiptune.wav")) {
+        cerr << "Failed to load background music!" << endl;
+    }
+    else {
+        backgroundMusic.setLoop(true); // Enable looping
+        backgroundMusic.play();       // Start playing music
+    }
 
     // Create player
     {
@@ -97,6 +110,10 @@ void Level1Scene::Load() {
 
 void Level1Scene::UnLoad() {
     cout << "Scene 1 Unload" << endl;
+
+    // Stop music and reset
+    backgroundMusic.stop();
+
     player.reset();
     ls::unload();
     Scene::UnLoad();
